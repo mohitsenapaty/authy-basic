@@ -1,8 +1,9 @@
 const httpStatus = require('http-status');
-const { isCelebrate } = require('celebrate');
+const { isCelebrateError, CelebrateError } = require('celebrate');
 const { map } = require('lodash');
 const APIError = require('../utils/APIError');
 const { env } = require('../../config/vars');
+const { logger } = require('../../config/logger');
 
 /**
  * Error handler. Send stacktrace only during development
@@ -32,19 +33,15 @@ exports.handler = handler;
  */
 exports.validationError = (err, req, res, next) => {
   // If this isn't a Celebrate error, send it to the next error handler
-  if (!isCelebrate(err)) {
+  if (!isCelebrateError(err)) {
     return next(err);
   }
 
-  const { joi, meta } = err;
+  logger.error("Validation failed", err);
   const error = new APIError({
     message: 'Validation Error',
-    errors: joi.message,
+    errors: err.message,
     status: httpStatus.BAD_REQUEST,
-    stack: {
-      source: meta.source,
-      keys: joi.details ? map(joi.details, (detail) => detail.path.join('.')) : [],
-    },
   });
 
   return handler(error, req, res);

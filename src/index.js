@@ -5,13 +5,13 @@ const { logger } = require('./config/logger');
 // if (env === 'production') require('newrelic');
 
 // make bluebird default Promise
-Promise = require('bluebird'); // eslint-disable-line no-global-assign
+// Promise = require('bluebird'); // eslint-disable-line no-global-assign
 
 const app = require('./config/express');
-// const mongoose = require('./config/mongoose');
+const dynamoose = require('./config/dynamoose');
 
 // open mongoose connection
-// mongoose.connect();
+dynamoose.init();
 
 // listen to requests
 app.listen(port, () => logger.info(`API Server started on port ${port} (${env})`)); // eslint-disable-line no-console
