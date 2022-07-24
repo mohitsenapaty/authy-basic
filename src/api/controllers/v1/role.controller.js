@@ -1,35 +1,42 @@
 const { logger } = require('../../../config/logger');
 const httpStatus = require('http-status');
 const moment = require('moment');
-const Client = require('../../models/client.model');
+const Role = require('../../models/role.model');
 
 /**
- * Create Client
+ * Create Role
  * @public
  */
 exports.create = async (req, res, next) => {
   try {
-    const client = await Client.createClient(req.body);
-    logger.info(client);
+    const exists = await Role.scan({ _id: req.body.name, archived: false }).exec();
+    if (exists.length > 0){
+      return res.status(httpStatus.CREATED).json({
+        code: httpStatus.CREATED, message: 'Role created successfully', role: exists[0]
+      });
+    }
+    const role = await Role.create({...req.body});
+    logger.info(role);
     return res.status(httpStatus.CREATED).json({
-      code: httpStatus.CREATED, message: 'Client created successfully', client
+      code: httpStatus.CREATED, message: 'Role created successfully', role
     });
   } catch (error) {
+    // TODO: make idempotent by handling unique constraint violation error
     return next(error);
   }
 };
 
 /**
- * Read Client
+ * Read Role
  * @public
  */
 exports.read = async (req, res, next) => {
   try {
-    const readClient = await Client.scan({ _id: req.params.id, archived: false }).exec();
+    const role = await Role.scan({ _id: req.params.id, archived: false }).exec();
 
-    if (readClient) {
+    if (role) {
       return res.status(httpStatus.OK).json({
-        code: httpStatus.OK, message: 'Client fetched successfully', readClient
+        code: httpStatus.OK, message: 'Role fetched successfully', role
       });
     }
     return res.status(httpStatus.NOT_FOUND).json({
@@ -41,20 +48,20 @@ exports.read = async (req, res, next) => {
 };
 
 /**
- * List Client
+ * List Role
  * @public
  */
 exports.list = async (req, res, next) => {
   try {
     logger.info(req.query);
-    const clients = Client.serializeMany(await Client.scan({
+    const roles = await Role.scan({
       ...(req.query.name) && {
         name: {eq: req.query.name}
       }
-    }).exec());
+    }).exec();
 
     return res.status(httpStatus.OK).json({
-      code: httpStatus.OK, message: 'Client(s) fetched successfully', clients
+      code: httpStatus.OK, message: 'Role(s) fetched successfully', roles
     });
   } catch (error) {
     return next(error);
@@ -62,18 +69,15 @@ exports.list = async (req, res, next) => {
 };
 
 /**
- * Update Client
+ * Update Role
  * @public
  */
 exports.update = async (req, res, next) => {
   try {
-    const client = await Client.updateClient({
-      _id: req.params.id,
-      archived: false,
-    }, req.body, req.body.reset);
+    const role = await Role.update({_id: req.params.id,}, ...req.body);
 
-    if (client) {
-      return res.status(httpStatus.OK).json({ code: httpStatus.OK, message: 'Client updated successfully', client });
+    if (role) {
+      return res.status(httpStatus.OK).json({ code: httpStatus.OK, message: 'Role updated successfully', role });
     }
     return res.status(httpStatus.NOT_FOUND).json({ code: httpStatus.NOT_FOUND, message: 'Resource not found' });
   } catch (error) {
@@ -82,12 +86,12 @@ exports.update = async (req, res, next) => {
 };
 
 /**
- * Delete Client
+ * Delete Role
  * @public
  */
 exports.delete = async (req, res, next) => {
   try {
-    const client = await Client.findOneAndUpdate({
+    const role = await Role.findOneAndUpdate({
       _id: req.params.id,
       archived: false,
     }, {
@@ -95,7 +99,7 @@ exports.delete = async (req, res, next) => {
       archivedAt: moment().toISOString(),
     });
 
-    if (client) {
+    if (role) {
       return res.status(httpStatus.NO_CONTENT);
     }
     return res.status(httpStatus.NOT_FOUND).json({ code: httpStatus.NOT_FOUND, message: 'Resource not found' });

@@ -16,5 +16,6 @@ module.exports = {
             secretAccessKey: 'test',
             region: 'ap-south-1'
         }
-    }
+    },
+    jwtKey: process.env.JWT_TOKEN_KEY,
 }

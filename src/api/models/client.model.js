@@ -9,6 +9,14 @@ const dynamoose = require("dynamoose");
  * @private
  */
 const clientSchema = new dynamoose.Schema({
+  _id: {
+    type: String,
+    maxlength: 50,
+    required: true,
+    unique: true,
+    default: (m = Math, d = Date, h = 16, s = s => m.floor(s).toString(h)) =>
+      s(d.now() / 1000) + ' '.repeat(h).replace(/./g, () => s(m.random() * h))
+  },
   name: {
     type: String,
     maxlength: 50,
