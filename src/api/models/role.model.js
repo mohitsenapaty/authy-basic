@@ -31,6 +31,6 @@ const roleSchema = new dynamoose.Schema({
   timestamps: true,
 });
 
-const roleModel = dynamoose.model("Role", roleSchema);
+const roleModel = dynamoose.model("Authy-Role", roleSchema);
 
 module.exports = roleModel;

@@ -57,7 +57,7 @@ const userSchema = new dynamoose.Schema({
   timestamps: true,
 });
 
-const userModel = dynamoose.model("User", userSchema);
+const userModel = dynamoose.model("Authy-User", userSchema);
 
 userModel.methods.set("createUser", async function (params) {
   const inputPassword = params.password;

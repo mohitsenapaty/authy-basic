@@ -46,7 +46,7 @@ const clientSchema = new dynamoose.Schema({
   timestamps: true,
 });
 
-const clientModel = dynamoose.model("Client", clientSchema);
+const clientModel = dynamoose.model("Authy-Client", clientSchema);
 
 clientModel.methods.set("createClient", async function (data) {
   const username = clientid(secretkey).generate();
