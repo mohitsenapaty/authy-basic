@@ -10,7 +10,7 @@ const { logger } = require('./config/logger');
 const app = require('./config/express');
 const dynamoose = require('./config/dynamoose');
 
-// open mongoose connection
+// open dynamoose connection
 dynamoose.init();
 
 // listen to requests
