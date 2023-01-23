@@ -7,15 +7,18 @@ require('dotenv-safe').config({
 });
 
 module.exports = {
-    env: process.env.NODE_ENV,
-    port: process.env.PORT,
-    secretkey: 'test',
-    dynamoConfig: {
-        aws: {
-            accessKeyId: 'test',
-            secretAccessKey: 'test',
-            region: 'ap-south-1'
-        }
+  env: process.env.NODE_ENV,
+  port: process.env.PORT,
+  secretkey: 'test',
+  dynamoConfig: {
+    aws: {
+      accessKeyId: 'test',
+      secretAccessKey: 'test',
+      region: 'ap-south-1',
     },
-    jwtKey: process.env.JWT_TOKEN_KEY,
+    local: {
+      url: process.env.DYNAMOURL,
+    },
+  },
+  jwtKey: process.env.JWT_TOKEN_KEY,
 }

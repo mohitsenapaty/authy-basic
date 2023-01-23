@@ -8,7 +8,7 @@ exports.init = () => {
     secretAccessKey: dynamoConfig.aws.secretAccessKey,
     region: dynamoConfig.aws.region
   });
-  if (env == 'local') dynamoose.aws.ddb.local("http://localhost:8000")
+  if (env == 'local') dynamoose.aws.ddb.local(dynamoConfig.local.url)
 };
 
 exports.dynamoose = dynamoose;
